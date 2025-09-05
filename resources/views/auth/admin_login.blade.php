@@ -5,10 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sabaragamuwa University - Hostel Management</title>
     <link rel="icon" type="image/png" href="images/logo.png">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     
     <style>
+        /* Reset and base styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
         body {
             background: #f0f0f0;
             font-family: 'Roboto', Arial, sans-serif;
@@ -40,6 +46,7 @@
             width: 100%;
             z-index: 1;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+
         }
         
         .transparent-box {
@@ -53,10 +60,11 @@
             position: relative;
             box-shadow: 0 4px 10px rgba(153, 153, 153, 0.5);
             border: 2px #3a3a3aff;  
-            z-index: 2;
+            z-index: 2; 
             margin-bottom: 40px;
             backdrop-filter: blur(40px);
             -webkit-backdrop-filter: blur(10px); 
+
         }
         
         .login-container {
@@ -79,31 +87,50 @@
             color: #2c3e50;
         }
         
+        .form-group {
+            margin-bottom: 30px;
+        }
+        
         .form-label {
+            display: block;
             font-weight: 500;
             color: #2c3e50;
+            margin-bottom: 8px;
         }
         
         .form-control {
+            width: 100%;
             border-radius: 10px;
             padding: 12px 15px;
             border: 2px solid #ddd;
             transition: all 0.3s;
+            font-size: 16px;
         }
         
         .form-control:focus {
             border-color: #4a6cf7;
-            box-shadow: 0 0 0 0.2rem rgba(74, 108, 247, 0.25);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(74, 108, 247, 0.25);
+        }
+        
+        .invalid-feedback {
+            display: block;
+            color: #dc3545;
+            margin-top: 5px;
+            font-size: 14px;
         }
         
         .btn-login {
             background-color: #4a6cf7;
+            color: white;
             border: none;
             border-radius: 10px;
             padding: 12px;
             font-weight: 600;
             font-size: 18px;
             transition: all 0.3s;
+            width: 100%;
+            cursor: pointer;
         }
         
         .btn-login:hover {
@@ -121,10 +148,7 @@
             z-index: 2;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
             display: flex;               
-            align-items: center;
-            justify-content: center;
-            border-bottom-left-radius: 50px;
-            border-bottom-right-radius: 50px;
+            align-items: center;   
         }
         
         .logo {
@@ -158,14 +182,16 @@
         .copyright_logo {
             height: 40px;
             width: auto;
-            margin-right: 15px;
+            position: static;  
+            margin-left: 20px;
+
         }
             
         .copyright {
             font-weight: 300;
             font-size: 18px;
             line-height: 1.2;
-            margin: 0;
+            margin: 4px;
         }
         
         .login-content {
@@ -234,25 +260,21 @@
                 
                 <form method="POST" action="{{ url('/') }}">
                     @csrf
-                    <div class="mb-4">
+                    <div class="form-group">
                         <label for="user_id" class="form-label">User ID</label>
-                        <input type="text" class="form-control @error('user_id') is-invalid @enderror" 
+                        <input type="text" class="form-control" 
                                id="user_id" name="user_id" value="{{ old('user_id') }}" required autofocus>
-                        @error('user_id')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
+                        <!-- Error message would go here -->
                     </div>
                     
-                    <div class="mb-4">
+                    <div class="form-group">
                         <label for="password" class="form-label">Password</label>
-                        <input type="password" class="form-control @error('password') is-invalid @enderror" 
+                        <input type="password" class="form-control" 
                                id="password" name="password" required>
-                        @error('password')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
+                        <!-- Error message would go here -->
                     </div>
                     
-                    <button type="submit" class="btn btn-primary btn-login w-100">Login</button>
+                    <button type="submit" class="btn-login">Login</button>
                 </form>
             </div>
         </div>
@@ -263,7 +285,5 @@
             <div class="copyright">Copyrights SUSL 2025. All Rights Reserved.</div>
         </div>
     </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
