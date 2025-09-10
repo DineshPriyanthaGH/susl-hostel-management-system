@@ -62,7 +62,9 @@
             z-index: 2;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
             display: flex;               
-            align-items: center;       /* centers horizontally */
+            align-items: center;     
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;      /* centers horizontally */
         }
         .logo {
             height: 130px;
