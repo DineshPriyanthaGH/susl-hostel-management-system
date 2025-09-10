@@ -1,23 +1,34 @@
 
+-- ===================================================================
+-- SUSL Hostel Management System Database
+-- Version: 1.0
+-- Created: September 2025
+-- ===================================================================
 
+-- Set SQL mode and character set
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
 
--- Database: `susl_hostel_management_system`
-CREATE DATABASE IF NOT EXISTS `susl_hostel_management_system` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+-- Create database if not exists
+CREATE DATABASE IF NOT EXISTS `susl_hostel_management_system` 
+DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- Use the database
 USE `susl_hostel_management_system`;
 
-
-
+-- ===================================================================
+-- Table: migrations
+-- Purpose: Laravel migration tracking
+-- ===================================================================
 DROP TABLE IF EXISTS `migrations`;
 CREATE TABLE `migrations` (
-  `id` int(10) UNSIGNED NOT NULL,
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `migration` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `batch` int(11) NOT NULL
+  `batch` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-=
 
 DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users` (
