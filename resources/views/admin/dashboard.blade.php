@@ -331,16 +331,29 @@
                 <div class="col-md-6 mb-4">
                     <div class="feature-card">
                         <h3>Add Student Details</h3>
-                        <p>To add student details</p>
-                        <!-- <button class="btn-feature">Click Here</button> -->
+                        <p>To add new student details to the system</p>
                         <a href="{{ route('student.details.create') }}" class="btn-feature">Click Here</a>
                     </div>
                 </div>
                 <div class="col-md-6 mb-4">
                     <div class="feature-card">
                         <h3>Search Student Details</h3>
-                        <p>To search student details</p>
-                        <button class="btn-feature">Click Here</button>
+                        <p>To search for specific student details</p>
+                        <a href="{{ route('student.details.search') }}" class="btn-feature">Click Here</a>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-4">
+                    <div class="feature-card">
+                        <h3>View All Students</h3>
+                        <p>To view and manage all student records</p>
+                        <a href="{{ route('student.details.index') }}" class="btn-feature">Click Here</a>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-4">
+                    <div class="feature-card">
+                        <h3>Student Management</h3>
+                        <p>Complete student records management system</p>
+                        <a href="{{ route('student.details.index') }}" class="btn-feature">Manage Students</a>
                     </div>
                 </div>
             </div>

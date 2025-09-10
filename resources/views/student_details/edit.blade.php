@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Student Details - SUSL Hostel Management</title>
+    <title>Edit {{ $student->full_name }} - SUSL Hostel Management</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     
@@ -22,7 +22,7 @@
             flex: 1;
             display: flex;
             flex-direction: column;
-            min-height: 0; /* Important for flex children */
+            min-height: 0;
         }
         
         .container {
@@ -33,7 +33,7 @@
             flex: 1;
             display: flex;
             flex-direction: column;
-            min-height: 0; /* Important for flex children */
+            min-height: 0;
         }
         
         .background-div {
@@ -52,15 +52,12 @@
             min-height: 150px;
             background-color: #E3E3E3;
             border-radius: 50px;
-            border-color: #000000ff;
-            border-width: 5px;
             color: #000000ff;
             padding: 20px;
             display: flex;
             align-items: center;
             position: relative;
             box-shadow: 0 4px 10px rgba(153, 153, 153, 0.5);
-            border: 2px #3a3a3aff;  
             z-index: 2;
             margin-bottom: 40px;
             margin-top: 10px;
@@ -138,7 +135,7 @@
         }
         
         .form-title {
-            text-align: left;
+            text-align: center;
             font-size: 28px;
             font-weight: 600;
             margin-bottom: 30px;
@@ -166,7 +163,7 @@
         }
         
         .btn-submit {
-            background-color: #4a6cf7;
+            background-color: #28a745;
             border: none;
             border-radius: 10px;
             padding: 12px 30px;
@@ -174,14 +171,31 @@
             font-size: 18px;
             transition: all 0.3s;
             color: white;
-            display: block;
-            margin: 30px 0 0 0;
-            width: 200px;
+            margin-right: 15px;
+        }
+        
+        .btn-cancel {
+            background-color: #6c757d;
+            border: none;
+            border-radius: 10px;
+            padding: 12px 30px;
+            font-weight: 600;
+            font-size: 18px;
+            transition: all 0.3s;
+            color: white;
+            text-decoration: none;
+            display: inline-block;
         }
         
         .btn-submit:hover {
-            background-color: #3a5cd8;
+            background-color: #218838;
             transform: translateY(-2px);
+        }
+        
+        .btn-cancel:hover {
+            background-color: #545b62;
+            transform: translateY(-2px);
+            color: white;
         }
         
         .year-section {
@@ -204,12 +218,10 @@
             background-color: #E3E3E3;
             height: 110px;
             position: relative;
-            bottom: 0px;
-            left: 0;
             width: 100%;
             z-index: 2;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-            display: flex;               
+            display: flex;
             align-items: center;
             justify-content: center;
             border-bottom-left-radius: 50px;
@@ -217,7 +229,6 @@
             padding: 0 40px;
             margin-bottom: 10px;
         }
-
         
         .footer-content {
             display: flex;
@@ -226,7 +237,7 @@
             width: 100%;
             max-width: 1200px;
         }
-
+        
         .copyright-section {
             display: flex;
             align-items: center;
@@ -237,14 +248,14 @@
             width: auto;
             margin-right: 15px;
         }
-            
+        
         .copyright {
             font-weight: 300;
             font-size: 18px;
             line-height: 1.2;
             margin: 0;
         }
-
+        
         .contact-link {
             color: #009DFF;
             text-decoration: none;
@@ -252,7 +263,7 @@
             font-size: 18px;
             transition: all 0.3s;
         }
-
+        
         .contact-link:hover {
             text-decoration: underline;
             color: #007acc;
@@ -292,45 +303,7 @@
             .form-container {
                 padding: 25px;
             }
-
-            .bottom-div {
-                height: auto;
-                padding: 20px;
-            }
         }
-        .details-container {
-            margin-top: 20px;
-        }
-
-        .detail-row {
-            display: flex;
-            margin-bottom: 12px;
-            gap: 0;
-        }
-
-        .detail-label {
-            background-color: #f1f3f4;
-            padding: 12px 15px;
-            font-size: 14px;
-            font-weight: 500;
-            color: #495057;
-            width: 250px;
-            border: 1px solid #ced4da;
-            border-radius: 15px 0 0 15px;
-            border-right: none;
-        }
-        .detail-value {
-            background-color: white;
-            padding: 12px 15px;
-            font-size: 14px;
-            color: #333;
-            flex: 1;
-            border: 1px solid #ced4da;
-            border-radius: 0 15px 15px 0;
-            border-left: none;
-        }
-
-
     </style>
 </head>
 <body>
@@ -339,7 +312,7 @@
             <!-- Background div -->
             <div class="background-div"></div>
             
-            <!-- Header with logo and university name -->
+            <!-- Header -->
             <div class="header">
                 <img src="{{ asset('images/logo.png') }}" alt="University Logo" class="logo">
                 <div class="text-container">
@@ -347,15 +320,14 @@
                         <div class="university-name">Sabaragamuwa University of Sri Lanka</div>
                         <div class="system-name">Hostel Management System</div>
                     </div>
-                    <a href="{{ route('admin.dashboard') }}" class="back-btn">Back to Dashboard</a>
+                    <a href="{{ route('student.details.show', $student->id) }}" class="back-btn">Back to Details</a>
                 </div>
             </div>
             
             <!-- Form Content -->
             <div class="form-content-wrapper">
                 <div class="form-container">
-                    <h2 class="form-title">Search Student Details</h2>
-                    
+                    <h2 class="form-title">Edit Student Details - {{ $student->student_id }}</h2>
                     
                     @if(session('success'))
                         <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -383,129 +355,141 @@
                         </div>
                     @endif
                     
-                    <form method="POST" action="{{ route('student.details.find') }}">
+                    <form method="POST" action="{{ route('student.details.update', $student->id) }}">
                         @csrf
-                    
-                     <div class="mb-4">
+                        @method('PUT')
+                        
+                        <div class="mb-4">
+                            <label class="form-label">Mr./Mrs./Rev.</label>
+                            <select class="form-select" name="title" required>
+                                <option value="">Select the relevant one</option>
+                                <option value="Mr." {{ (old('title', $student->title) == 'Mr.') ? 'selected' : '' }}>Mr.</option>
+                                <option value="Mrs." {{ (old('title', $student->title) == 'Mrs.') ? 'selected' : '' }}>Mrs.</option>
+                                <option value="Rev." {{ (old('title', $student->title) == 'Rev.') ? 'selected' : '' }}>Rev.</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="form-label">Full Name</label>
+                            <input type="text" class="form-control" name="full_name" placeholder="Enter student's full name" value="{{ old('full_name', $student->full_name) }}" required>
+                        </div>
+                        
+                        <div class="mb-4">
                             <label class="form-label">Student ID</label>
-                            <input type="text" class="form-control" name="student_id"  value="{{ old('student_id') }}" required>
+                            <input type="text" class="form-control" name="student_id" placeholder="Enter student ID" value="{{ old('student_id', $student->student_id) }}" required>
                         </div>
-                        <button type="submit" class="btn-submit">Search</button>
+                        
+                        <div class="mb-4">
+                            <label class="form-label">Faculty</label>
+                            <select class="form-select" name="faculty" required>
+                                <option value="">Select Faculty</option>
+                                <option value="Faculty Of Computing" {{ (old('faculty', $student->faculty) == 'Faculty Of Computing') ? 'selected' : '' }}>Faculty Of Computing</option>
+                                <option value="Faculty Of Geomatics" {{ (old('faculty', $student->faculty) == 'Faculty Of Geomatics') ? 'selected' : '' }}>Faculty Of Geomatics</option>
+                                <option value="Faculty Of Management" {{ (old('faculty', $student->faculty) == 'Faculty Of Management') ? 'selected' : '' }}>Faculty Of Management</option>
+                                <option value="Faculty Of Technology" {{ (old('faculty', $student->faculty) == 'Faculty Of Technology') ? 'selected' : '' }}>Faculty Of Technology</option>
+                                <option value="Faculty Of Agriculture" {{ (old('faculty', $student->faculty) == 'Faculty Of Agriculture') ? 'selected' : '' }}>Faculty Of Agriculture</option>
+                                <option value="Faculty Of Social Sciences" {{ (old('faculty', $student->faculty) == 'Faculty Of Social Sciences') ? 'selected' : '' }}>Faculty Of Social Sciences</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="form-label">Telephone Number</label>
+                            <input type="text" class="form-control" name="telephone_number" placeholder="07XXXXXXXXX" pattern="[0-9]{10}" value="{{ old('telephone_number', $student->telephone_number) }}" required>
+                        </div>
+                        
+                        <!-- First Year Section -->
+                        <div class="year-section">
+                            <div class="year-title">First Year</div>
+                            <div class="mb-4">
+                                <label class="form-label">First Year Hostel Name</label>
+                                <input type="text" class="form-control" name="first_year_hostel" placeholder="Enter the name" value="{{ old('first_year_hostel', $student->first_year_hostel) }}">
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label class="form-label">Payment Date for Hostel</label>
+                                <input type="date" class="form-control" name="first_year_payment_date" value="{{ old('first_year_payment_date', $student->first_year_payment_date ? $student->first_year_payment_date->format('Y-m-d') : '') }}">
+                            </div>
+                        </div>
+                        
+                        <!-- Second Year Section -->
+                        <div class="year-section">
+                            <div class="year-title">Second Year</div>
+                            <div class="mb-4">
+                                <label class="form-label">Second Year Hostel Name</label>
+                                <input type="text" class="form-control" name="second_year_hostel" placeholder="Enter the name" value="{{ old('second_year_hostel', $student->second_year_hostel) }}">
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label class="form-label">Payment Date for Hostel</label>
+                                <input type="date" class="form-control" name="second_year_payment_date" value="{{ old('second_year_payment_date', $student->second_year_payment_date ? $student->second_year_payment_date->format('Y-m-d') : '') }}">
+                            </div>
+                        </div>
+                        
+                        <!-- Third Year Section -->
+                        <div class="year-section">
+                            <div class="year-title">Third Year</div>
+                            <div class="mb-4">
+                                <label class="form-label">Third Year Hostel Name</label>
+                                <input type="text" class="form-control" name="third_year_hostel" placeholder="Enter the name" value="{{ old('third_year_hostel', $student->third_year_hostel) }}">
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label class="form-label">Payment Date for Hostel</label>
+                                <input type="date" class="form-control" name="third_year_payment_date" value="{{ old('third_year_payment_date', $student->third_year_payment_date ? $student->third_year_payment_date->format('Y-m-d') : '') }}">
+                            </div>
+                        </div>
+                        
+                        <!-- Fourth Year Section -->
+                        <div class="year-section">
+                            <div class="year-title">Fourth Year</div>
+                            <div class="mb-4">
+                                <label class="form-label">Fourth Year Hostel Name</label>
+                                <input type="text" class="form-control" name="fourth_year_hostel" placeholder="Enter the name" value="{{ old('fourth_year_hostel', $student->fourth_year_hostel) }}">
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label class="form-label">Payment Date for Hostel</label>
+                                <input type="date" class="form-control" name="fourth_year_payment_date" value="{{ old('fourth_year_payment_date', $student->fourth_year_payment_date ? $student->fourth_year_payment_date->format('Y-m-d') : '') }}">
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="form-label">Guardian's Name</label>
+                            <input type="text" class="form-control" name="guardian_name" placeholder="Enter the guardian's name" value="{{ old('guardian_name', $student->guardian_name) }}" required>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="form-label">Guardian's Telephone Number</label>
+                            <input type="text" class="form-control" name="guardian_telephone" placeholder="07XXXXXXXXX" pattern="[0-9]{10}" value="{{ old('guardian_telephone', $student->guardian_telephone) }}" required>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="form-label">Residential Address</label>
+                            <textarea class="form-control" name="residential_address" rows="3" placeholder="Enter the address" required>{{ old('residential_address', $student->residential_address) }}</textarea>
+                        </div>
+                        
+                        <div class="d-flex justify-content-center">
+                            <button type="submit" class="btn-submit">Update Details</button>
+                            <a href="{{ route('student.details.show', $student->id) }}" class="btn-cancel">Cancel</a>
+                        </div>
                     </form>
-                
-
-                @if(isset($student))
-                <div class="details-container">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h3 class="text-primary">Student Details Found</h3>
-                        <div>
-                            <a href="{{ route('student.details.edit', $student->id) }}" class="btn btn-warning btn-sm me-2">Edit</a>
-                            <form method="POST" action="{{ route('student.details.destroy', $student->id) }}" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this student record?')">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                            </form>
-                        </div>
-                    </div>
-                    
-                <div class="detail-row">
-                    <div class="detail-label">Mr./Mrs./Miss/Rev.</div>
-                    <div class="detail-value">{{ $student->title }}</div>
-                </div>
-                 <div class="detail-row">
-                    <div class="detail-label">Full Name</div>
-                    <div class="detail-value">{{ $student->full_name }}</div>
-                </div>
-                <div class="detail-row">
-                    <div class="detail-label">Student ID</div>
-                    <div class="detail-value">{{ $student->student_id }}</div>
-                </div>
-                <div class="detail-row">
-                    <div class="detail-label">Faculty</div>
-                    <div class="detail-value">{{ $student->faculty }}</div>
-                </div>
-                <div class="detail-row">
-                    <div class="detail-label">Telephone Number</div>
-                    <div class="detail-value">{{ $student->telephone_number }}</div>
-                </div>
-                <div class="detail-row">
-                    <div class="detail-label">First Year Hostel Name</div>
-                    <div class="detail-value">{{ $student->first_year_hostel ?? 'Not specified' }}</div>
-                </div>
-                <div class="detail-row">
-                    <div class="detail-label">Payment Date for Hostels</div>
-                    <div class="detail-value">{{ $student->first_year_payment_date ? $student->first_year_payment_date->format('Y-m-d') : 'Not specified' }}</div>
-                </div>
-                <div class="detail-row">
-                    <div class="detail-label">Second Year Hostel Name</div>
-                    <div class="detail-value">{{ $student->second_year_hostel ?? 'Not specified' }}</div>
-                </div>
-                <div class="detail-row">
-                    <div class="detail-label">Payment Date for Hostels</div>
-                    <div class="detail-value">{{ $student->second_year_payment_date ? $student->second_year_payment_date->format('Y-m-d') : 'Not specified' }}</div>
-                </div>
-                <div class="detail-row">
-                    <div class="detail-label">Third Year Hostel Name</div>
-                    <div class="detail-value">{{ $student->third_year_hostel ?? 'Not specified' }}</div>
-                </div>
-                <div class="detail-row">
-                    <div class="detail-label">Payment Date for Hostels</div>
-                    <div class="detail-value">{{ $student->third_year_payment_date ? $student->third_year_payment_date->format('Y-m-d') : 'Not specified' }}</div>
-                </div>
-                <div class="detail-row">
-                    <div class="detail-label">Fourth Year Hostel Name</div>
-                    <div class="detail-value">{{ $student->fourth_year_hostel ?? 'Not specified' }}</div>
-                </div>
-                <div class="detail-row">
-                    <div class="detail-label">Payment Date for Hostels</div>
-                    <div class="detail-value">{{ $student->fourth_year_payment_date ? $student->fourth_year_payment_date->format('Y-m-d') : 'Not specified' }}</div>
-                </div>
-                <div class="detail-row">
-                    <div class="detail-label">Guardian's Name</div>
-                    <div class="detail-value">{{ $student->guardian_name }}</div>
-                </div>
-                <div class="detail-row">
-                    <div class="detail-label">Guardian's Telephone Number</div>
-                    <div class="detail-value">{{ $student->guardian_telephone }}</div>
-                </div>
-                <div class="detail-row">
-                    <div class="detail-label">Residential Address</div>
-                    <div class="detail-value">{{ $student->residential_address }}</div>
-                </div>
-                <div class="detail-row">
-                    <div class="detail-label">Record Created</div>
-                    <div class="detail-value">{{ $student->created_at->format('Y-m-d H:i:s') }}</div>
-                </div>
-                <div class="detail-row">
-                    <div class="detail-label">Last Updated</div>
-                    <div class="detail-value">{{ $student->updated_at->format('Y-m-d H:i:s') }}</div>
                 </div>
             </div>
-            @else
-                <div class="alert alert-info mt-4">
-                    <h5>Search for a Student</h5>
-                    <p>Enter a Student ID above to search for student details.</p>
-                </div>
-            @endif
             
-        </div>
-       
-    </div>
-           
-    
-            <!-- Footer with copyright and contact link-->
+            <!-- Footer -->
             <div class="bottom-div">
                 <div class="footer-content">
                     <div class="copyright-section">
                         <img src="{{ asset('images/Copyright.png') }}" alt="Copyright Logo" class="copyright_logo">
-                    <div class="copyright">Copyrights SUSL 2025. All Rights Reserved.</div>
-                </div>
+                        <div class="copyright">Copyrights SUSL 2025. All Rights Reserved.</div>
+                    </div>
                     <div class="contact-section">
                         <a href="{{ route('contact.us') }}" class="contact-link">Contact Us</a>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     
@@ -514,44 +498,14 @@
             const form = document.querySelector('form');
             const submitButton = document.querySelector('.btn-submit');
             
-            // Add form submission debugging
             form.addEventListener('submit', function(e) {
-                console.log('Form submission triggered');
-                console.log('Form action:', form.action);
-                console.log('Form method:', form.method);
-                
-                // Show loading state
                 submitButton.disabled = true;
-                submitButton.textContent = 'Submitting...';
+                submitButton.textContent = 'Updating...';
                 
-                // Re-enable after 3 seconds if still on page
                 setTimeout(() => {
                     submitButton.disabled = false;
-                    submitButton.textContent = 'Submit';
+                    submitButton.textContent = 'Update Details';
                 }, 3000);
-            });
-            
-            // Add click debugging for submit button
-            submitButton.addEventListener('click', function(e) {
-                console.log('Submit button clicked');
-                
-                // Check if form is valid
-                if (!form.checkValidity()) {
-                    console.log('Form validation failed');
-                    e.preventDefault();
-                    form.reportValidity();
-                    return false;
-                }
-                
-                console.log('Form is valid, proceeding with submission');
-            });
-            
-            // Add debugging for required fields
-            const requiredFields = form.querySelectorAll('[required]');
-            requiredFields.forEach(field => {
-                field.addEventListener('invalid', function() {
-                    console.log('Invalid field:', field.name, field.value);
-                });
             });
         });
     </script>

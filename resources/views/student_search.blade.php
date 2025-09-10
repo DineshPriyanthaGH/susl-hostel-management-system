@@ -324,7 +324,7 @@
                     <h2 class="form-title">Search Student Details</h2>
                     
                     
-                    <form method="POST" action="{{ route('student.details.store') }}">
+                    <form method="POST" action="{{ route('student.details.find') }}">
                         @csrf
                         
                         
