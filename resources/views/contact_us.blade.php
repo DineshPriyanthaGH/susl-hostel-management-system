@@ -55,7 +55,7 @@
         }
         .bottom-div {
             background-color: #E3E3E3;
-            height: 110px;
+            height: 7%;
             position: absolute;
             bottom: 0px;
             left: 0;
@@ -63,7 +63,9 @@
             z-index: 2;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
             display: flex;               
-            align-items: center;       /* centers horizontally */
+            align-items: center;
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;    
         }
         .logo {
             height: 130px;

@@ -26,7 +26,7 @@
             width: 90%;
             max-width: 1200px;
             margin: 20px auto;
-            min-height: 800px;
+            min-height: 900px;
         }
         
         /* Background div */
@@ -115,7 +115,7 @@
         
         .bottom-div {
             background-color: #E3E3E3;
-            height: 110px;
+            height: 7%;
             position: absolute;
             bottom: 0px;
             left: 0;
@@ -125,9 +125,9 @@
             display: flex;               
             align-items: center;
             justify-content: center;
-            border-bottom-left-radius: 50px;
-            border-bottom-right-radius: 50px;
             padding: 0 40px;
+              border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;    
         }
         
         .logo {

@@ -54,7 +54,7 @@
         }
         .bottom-div {
             background-color: #E3E3E3;
-            height: 110px;
+            height: 7%;
             position: absolute;
             bottom: 0px;
             left: 0;
@@ -166,7 +166,8 @@
         </div>
 
         
-            <img src="images/ok.png" class="ok_logo"> 
+            <img src="{{ asset('images/ok.png') }}" alt="OK Logo" class="ok_logo">
+
        
         
 

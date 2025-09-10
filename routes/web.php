@@ -28,8 +28,8 @@ Route::middleware(['web'])->group(function () {
 });
 
 // Contact Us Route
-Route::get('/contact-us', function() {
-    return view('contact'); // You'll need to create this view
+Route::get('views/contact_us', function() {
+    return view('contact_us'); // You'll need to create this view
 })->name('contact.us');
 
 // Redirect /home to admin login for compatibility
