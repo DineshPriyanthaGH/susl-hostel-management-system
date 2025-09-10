@@ -374,7 +374,15 @@
                         
                         <div class="mb-4">
                             <label class="form-label">Faculty</label>
-                            <input type="text" class="form-control" name="faculty" placeholder="Enter the Faculty" value="{{ old('faculty') }}" required>
+                            <select class="form-select" name="faculty" required>
+                                <option value="">Select Faculty</option>
+                                <option value="Faculty Of Computing" {{ old('faculty') == 'Faculty Of Computing' ? 'selected' : '' }}>Faculty Of Computing</option>
+                                <option value="Faculty Of Geomatics" {{ old('faculty') == 'Faculty Of Geomatics' ? 'selected' : '' }}>Faculty Of Geomatics</option>
+                                <option value="Faculty Of Management" {{ old('faculty') == 'Faculty Of Management' ? 'selected' : '' }}>Faculty Of Management</option>
+                                <option value="Faculty Of Technology" {{ old('faculty') == 'Faculty Of Technology' ? 'selected' : '' }}>Faculty Of Technology</option>
+                                <option value="Faculty Of Agriculture" {{ old('faculty') == 'Faculty Of Agriculture' ? 'selected' : '' }}>Faculty Of Agriculture</option>
+                                <option value="Faculty Of Social Sciences" {{ old('faculty') == 'Faculty Of Social Sciences' ? 'selected' : '' }}>Faculty Of Social Sciences</option>
+                            </select>
                         </div>
                         
                         <div class="mb-4">
