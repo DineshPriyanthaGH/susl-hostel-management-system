@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\StudentDetailController;
 
@@ -25,11 +26,31 @@ Route::middleware(['web'])->group(function () {
         ->name('student.details.create');
     Route::post('/admin/student-details/store', [StudentDetailController::class, 'store'])
         ->name('student.details.store');
+    Route::get('/admin/student-details/verified', [StudentDetailController::class, 'verified'])
+        ->name('student.details.verified');
+    Route::post('/admin/student-details/clear-session', [StudentDetailController::class, 'clearSession'])
+        ->name('student.details.clear-session');
+    
+    // Student Search and Management Routes
+    Route::get('/admin/student-details', [StudentDetailController::class, 'index'])
+        ->name('student.details.index');
+    Route::get('/admin/student-details/search', [StudentDetailController::class, 'search'])
+        ->name('student.details.search');
+    Route::post('/admin/student-details/find', [StudentDetailController::class, 'findStudent'])
+        ->name('student.details.find');
+    Route::get('/admin/student-details/{id}', [StudentDetailController::class, 'show'])
+        ->name('student.details.show');
+    Route::get('/admin/student-details/{id}/edit', [StudentDetailController::class, 'edit'])
+        ->name('student.details.edit');
+    Route::put('/admin/student-details/{id}', [StudentDetailController::class, 'update'])
+        ->name('student.details.update');
+    Route::delete('/admin/student-details/{id}', [StudentDetailController::class, 'destroy'])
+        ->name('student.details.destroy');
 });
 
 // Contact Us Route
-Route::get('views/contact_us', function() {
-    return view('contact_us'); // You'll need to create this view
+Route::get('/contact-us', function() {
+    return view('contact'); // You'll need to create this view
 })->name('contact.us');
 
 // Redirect /home to admin login for compatibility
