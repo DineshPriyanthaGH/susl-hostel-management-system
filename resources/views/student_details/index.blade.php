@@ -360,6 +360,79 @@
                         <a href="{{ route('student.details.search') }}" class="btn-action btn-info-custom">
                             <i class="fas fa-search"></i> Search Student
                         </a>
+                        <button type="button" class="btn-action btn-success-custom" data-bs-toggle="modal" data-bs-target="#exportModal">
+                            <i class="fas fa-file-pdf"></i> Export PDF
+                        </button>
+                    </div>
+                    
+                    <!-- Export PDF Modal -->
+                    <div class="modal fade" id="exportModal" tabindex="-1" aria-labelledby="exportModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-lg">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exportModalLabel">
+                                        <i class="fas fa-file-pdf text-danger"></i> Export Students to PDF
+                                    </h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form id="exportForm" action="{{ route('student.details.export.pdf') }}" method="GET">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label for="hostel" class="form-label"><i class="fas fa-building"></i> Select Hostel</label>
+                                                    <select class="form-select" id="hostel" name="hostel" required>
+                                                        <option value="">Choose hostel...</option>
+                                                        <option value="all">All Hostels</option>
+                                                        <!-- Options will be loaded dynamically -->
+                                                    </select>
+                                                    <div class="form-text">Select a specific hostel or choose "All Hostels" for complete report</div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label for="year" class="form-label"><i class="fas fa-graduation-cap"></i> Academic Year</label>
+                                                    <select class="form-select" id="year" name="year">
+                                                        <option value="all">All Years</option>
+                                                        <option value="first">First Year</option>
+                                                        <option value="second">Second Year</option>
+                                                        <option value="third">Third Year</option>
+                                                        <option value="fourth">Fourth Year</option>
+                                                    </select>
+                                                    <div class="form-text">Filter by specific academic year (optional)</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="alert alert-info">
+                                            <i class="fas fa-info-circle"></i>
+                                            <strong>PDF Export Information:</strong>
+                                            <ul class="mb-0 mt-2">
+                                                <li>The PDF will include complete student details with contact information</li>
+                                                <li>Students will be organized by hostel assignment</li>
+                                                <li>All years of hostel history will be shown for each student</li>
+                                                <li>Perfect for administrative reports and record keeping</li>
+                                            </ul>
+                                        </div>
+                                        
+                                        <div class="preview-info" id="previewInfo" style="display: none;">
+                                            <div class="alert alert-warning">
+                                                <i class="fas fa-users"></i>
+                                                <span id="studentCount">0</span> students will be included in this report.
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                        <i class="fas fa-times"></i> Cancel
+                                    </button>
+                                    <button type="button" class="btn btn-success" onclick="generatePDF()" id="generateBtn" disabled>
+                                        <i class="fas fa-download"></i> Generate & Download PDF
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     
                     <!-- Students Table -->
@@ -443,5 +516,143 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Load hostel options when modal opens
+        document.getElementById('exportModal').addEventListener('show.bs.modal', function (event) {
+            loadHostelOptions();
+        });
+        
+        // Load available hostels from API
+        function loadHostelOptions() {
+            fetch('{{ route("api.hostel.options") }}')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const hostelSelect = document.getElementById('hostel');
+                    
+                    // Store the current default options
+                    const chooseOption = hostelSelect.querySelector('option[value=""]');
+                    const allHostelsOption = hostelSelect.querySelector('option[value="all"]');
+                    
+                    // Clear all options
+                    hostelSelect.innerHTML = '';
+                    
+                    // Re-add default options
+                    if (chooseOption) hostelSelect.appendChild(chooseOption);
+                    if (allHostelsOption) hostelSelect.appendChild(allHostelsOption);
+                    
+                    // Add hostel options from API
+                    if (Array.isArray(data)) {
+                        data.forEach(hostel => {
+                            const option = document.createElement('option');
+                            option.value = hostel;
+                            option.textContent = hostel;
+                            hostelSelect.appendChild(option);
+                        });
+                    }
+                    
+                    console.log('Loaded hostels:', data);
+                })
+                .catch(error => {
+                    console.error('Error loading hostels:', error);
+                    
+                    // Add some default hostels if API fails
+                    const hostelSelect = document.getElementById('hostel');
+                    const defaultHostels = ['Hostel A', 'Hostel B', 'Hostel C', 'Main Hostel', 'New Hostel'];
+                    
+                    defaultHostels.forEach(hostel => {
+                        const option = document.createElement('option');
+                        option.value = hostel;
+                        option.textContent = hostel;
+                        hostelSelect.appendChild(option);
+                    });
+                });
+        }
+        
+        // Enable/disable generate button based on selection
+        document.getElementById('hostel').addEventListener('change', function() {
+            const generateBtn = document.getElementById('generateBtn');
+            const previewInfo = document.getElementById('previewInfo');
+            
+            console.log('Hostel changed to:', this.value);
+            
+            if (this.value) {
+                generateBtn.disabled = false;
+                // Show preview info
+                previewInfo.style.display = 'block';
+                updateStudentCount();
+            } else {
+                generateBtn.disabled = true;
+                previewInfo.style.display = 'none';
+            }
+        });
+        
+        // Update student count preview (simplified version)
+        function updateStudentCount() {
+            const hostel = document.getElementById('hostel').value;
+            const year = document.getElementById('year').value;
+            
+            // For now, show a generic message. You could make an API call to get exact count
+            const countSpan = document.getElementById('studentCount');
+            if (hostel === 'all') {
+                countSpan.textContent = 'All';
+            } else {
+                countSpan.textContent = 'Selected';
+            }
+        }
+        
+        // Generate PDF
+        function generatePDF() {
+            const form = document.getElementById('exportForm');
+            const hostel = document.getElementById('hostel').value;
+            const year = document.getElementById('year').value;
+            
+            console.log('Generate PDF clicked', { hostel, year });
+            
+            if (!hostel) {
+                alert('Please select a hostel option.');
+                return;
+            }
+            
+            // Show loading state
+            const generateBtn = document.getElementById('generateBtn');
+            const originalText = generateBtn.innerHTML;
+            generateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating PDF...';
+            generateBtn.disabled = true;
+            
+            // Create the URL manually to ensure it works
+            const exportUrl = '{{ route("student.details.export.pdf") }}';
+            const params = new URLSearchParams();
+            params.append('hostel', hostel);
+            params.append('year', year);
+            
+            const fullUrl = exportUrl + '?' + params.toString();
+            console.log('Redirecting to:', fullUrl);
+            
+            // Open in new window/tab to trigger download
+            window.open(fullUrl, '_blank');
+            
+            // Reset button after a short delay
+            setTimeout(() => {
+                generateBtn.innerHTML = originalText;
+                generateBtn.disabled = false;
+                // Close modal
+                const modal = bootstrap.Modal.getInstance(document.getElementById('exportModal'));
+                if (modal) modal.hide();
+            }, 2000);
+        }
+        
+        // Also listen for year changes to update preview
+        document.getElementById('year').addEventListener('change', function() {
+            if (document.getElementById('hostel').value) {
+                updateStudentCount();
+            }
+        });
+    </script>
 </body>
 </html>

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\StudentDetail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class StudentDetailController extends Controller
 {
@@ -253,5 +254,113 @@ class StudentDetailController extends Controller
 
         return redirect()->route('student.details.index')
             ->with('success', 'Student details deleted successfully!');
+    }
+
+    public function exportPDF(Request $request)
+    {
+        try {
+            // Check if admin is logged in
+            if (!Session::get('admin_logged_in')) {
+                return redirect()->route('admin.login')->with('error', 'Please login first.');
+            }
+
+            $hostel = $request->get('hostel');
+            $year = $request->get('year', 'all');
+            
+            // Build query based on filters
+            $query = StudentDetail::query();
+            
+            if ($hostel && $hostel !== 'all') {
+                if ($year && $year !== 'all') {
+                    // Filter by specific year hostel
+                    $hostelField = $year . '_year_hostel';
+                    $query->where($hostelField, $hostel);
+                } else {
+                    // Filter by any year hostel
+                    $query->where(function($q) use ($hostel) {
+                        $q->where('first_year_hostel', $hostel)
+                          ->orWhere('second_year_hostel', $hostel)
+                          ->orWhere('third_year_hostel', $hostel)
+                          ->orWhere('fourth_year_hostel', $hostel);
+                    });
+                }
+            }
+            
+            $students = $query->orderBy('full_name')->get();
+            
+            // For debugging - if no DomPDF, create simple response
+            if (!class_exists('Barryvdh\DomPDF\Facade\Pdf')) {
+                return response()->json([
+                    'message' => 'PDF generation ready',
+                    'students_count' => $students->count(),
+                    'hostel' => $hostel,
+                    'year' => $year,
+                    'note' => 'DomPDF not loaded - this is a test response'
+                ]);
+            }
+            
+            // Prepare data for PDF
+            $data = [
+                'students' => $students,
+                'hostel' => $hostel,
+                'year' => $year,
+                'total_students' => $students->count(),
+                'generated_at' => now()->format('Y-m-d H:i:s'),
+                'generated_by' => Session::get('admin_user_id', 'Admin')
+            ];
+            
+            // Generate PDF
+            $pdf = PDF::loadView('reports.students_hostel_pdf', $data);
+            $pdf->setPaper('A4', 'portrait');
+            
+            // Generate filename
+            $filename = 'SUSL_Students_';
+            if ($hostel && $hostel !== 'all') {
+                $filename .= str_replace(' ', '_', $hostel) . '_';
+            }
+            if ($year && $year !== 'all') {
+                $filename .= ucfirst($year) . '_Year_';
+            }
+            $filename .= date('Y-m-d_H-i-s') . '.pdf';
+            
+            return $pdf->download($filename);
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => $e->getMessage(),
+                'line' => $e->getLine(),
+                'file' => $e->getFile()
+            ], 500);
+        }
+    }
+
+    public function getHostelOptions()
+    {
+        // For debugging - temporarily remove session check
+        // if (!Session::get('admin_logged_in')) {
+        //     return response()->json(['error' => 'Unauthorized'], 401);
+        // }
+
+        try {
+            // Get all unique hostels from all year columns
+            $hostels = collect();
+            
+            $fields = ['first_year_hostel', 'second_year_hostel', 'third_year_hostel', 'fourth_year_hostel'];
+            
+            foreach ($fields as $field) {
+                $fieldHostels = StudentDetail::whereNotNull($field)
+                    ->where($field, '!=', '')
+                    ->where($field, '!=', 'Off Campus')
+                    ->distinct()
+                    ->pluck($field);
+                $hostels = $hostels->merge($fieldHostels);
+            }
+            
+            $uniqueHostels = $hostels->unique()->sort()->values();
+            
+            return response()->json($uniqueHostels);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 }

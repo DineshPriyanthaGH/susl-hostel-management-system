@@ -46,6 +46,12 @@ Route::middleware(['web'])->group(function () {
         ->name('student.details.update');
     Route::delete('/admin/student-details/{id}', [StudentDetailController::class, 'destroy'])
         ->name('student.details.destroy');
+    
+    // PDF Export Routes
+    Route::get('/admin/student-details/export-pdf', [StudentDetailController::class, 'exportPDF'])
+        ->name('student.details.export.pdf');
+    Route::get('/admin/api/hostel-options', [StudentDetailController::class, 'getHostelOptions'])
+        ->name('api.hostel.options');
 });
 
 // Contact Us Route
@@ -57,3 +63,8 @@ Route::get('/contact-us', function() {
 Route::get('/home', function() {
     return redirect()->route('admin.login');
 });
+
+// Test PDF route (temporary)
+Route::get('/test-pdf', function() {
+    return view('test_pdf');
+})->name('test.pdf');
