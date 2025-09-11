@@ -501,6 +501,58 @@
                 });
             });
         });
+
+    function editStudent() {
+    // Get the student ID from Blade
+    const studentId = "{{ $student->id ?? '' }}";
+
+    if (studentId) {
+        // Redirect to edit page using your route structure
+        window.location.href = `/admin/student-details/${studentId}/edit`;
+    } else {
+        alert('Student ID not found');
+    }
+}
+
+function printDetails() {
+    // Hide the action buttons before printing
+    const actionButtons = document.querySelector('.action-buttons');
+    if (actionButtons) {
+        actionButtons.style.display = 'none';
+    }
+
+    // Print the page
+    window.print();
+
+    // Show the buttons again after printing
+    setTimeout(() => {
+        if (actionButtons) {
+            actionButtons.style.display = 'flex';
+        }
+    }, 1000);
+}
+
+// Add print styles to hide buttons when printing
+const printStyles = `
+    @media print {
+        .action-buttons {
+            display: none !important;
+        }
+        body {
+            font-size: 12pt;
+            line-height: 1.4;
+        }
+    }
+`;
+
+const styleSheet = document.createElement("style");
+styleSheet.type = "text/css";
+styleSheet.innerText = printStyles;
+document.head.appendChild(styleSheet);
+
+
+
+
     </script>
 </body>
 </html>
