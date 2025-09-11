@@ -25,6 +25,14 @@ Route::middleware(['web'])->group(function () {
         ->name('student.details.create');
     Route::post('/admin/student-details/store', [StudentDetailController::class, 'store'])
         ->name('student.details.store');
+
+        // Student detail management routes
+    Route::get('/admin/student-details/{student}', [StudentDetailController::class, 'show'])
+    ->name('student.details.show');
+    Route::get('/admin/student-details/{student}/edit', [StudentDetailController::class, 'edit'])
+    ->name('student.details.edit');
+    Route::put('/admin/student-details/{student}', [StudentDetailController::class, 'update'])
+    ->name('student.details.update');
 });
 
 // Contact Us Route
