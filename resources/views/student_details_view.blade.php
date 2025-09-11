@@ -199,7 +199,51 @@
             border-bottom: 2px solid #4a6cf7;
             padding-bottom: 5px;
         }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
         
+        .edit-btn {
+            background-color: #4a6cf7;
+            border: none;
+            border-radius: 10px;
+            padding: 12px 30px;
+            font-weight: 600;
+            font-size: 18px;
+            transition: all 0.3s;
+            color: white;
+            display: block;
+            margin: 30px 0 0 0;
+            width: 200px;
+        }
+        
+        .edit-btn:hover {
+            background-color: #3a5cd8;
+            transform: translateY(-2px);
+        }
+        
+        .print-btn {
+            background: #dc3545;
+            border: none;
+            border-radius: 10px;
+            padding: 12px 30px;
+            font-weight: 600;
+            font-size: 18px;
+            transition: all 0.3s;
+            color: white;
+            display: block;
+            margin: 30px 0 0 0;
+            width: 200px;
+        }
+        
+        .print-btn:hover {
+            background-color: #c82333;
+            transform: translateY(-2px);
+        }
+
         .bottom-div {
             background-color: #E3E3E3;
             height: 110px;
@@ -481,6 +525,12 @@
                     <div class="detail-value">{{ $student->updated_at->format('Y-m-d H:i:s') }}</div>
                 </div>
             </div>
+
+            <div class="action-buttons">
+                <button class="edit-btn" onclick="editStudent()">Edit</button>
+                <button class="print-btn" onclick="printDetails()">Print</button>
+            </div>
+
             @else
                 <div class="alert alert-info mt-4">
                     <h5>Search for a Student</h5>
