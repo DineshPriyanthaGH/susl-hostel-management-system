@@ -199,7 +199,51 @@
             border-bottom: 2px solid #4a6cf7;
             padding-bottom: 5px;
         }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
         
+        .edit-btn {
+            background-color: #4a6cf7;
+            border: none;
+            border-radius: 10px;
+            padding: 12px 30px;
+            font-weight: 600;
+            font-size: 18px;
+            transition: all 0.3s;
+            color: white;
+            display: block;
+            margin: 30px 0 0 0;
+            width: 200px;
+        }
+        
+        .edit-btn:hover {
+            background-color: #3a5cd8;
+            transform: translateY(-2px);
+        }
+        
+        .print-btn {
+            background: #dc3545;
+            border: none;
+            border-radius: 10px;
+            padding: 12px 30px;
+            font-weight: 600;
+            font-size: 18px;
+            transition: all 0.3s;
+            color: white;
+            display: block;
+            margin: 30px 0 0 0;
+            width: 200px;
+        }
+        
+        .print-btn:hover {
+            background-color: #c82333;
+            transform: translateY(-2px);
+        }
+
         .bottom-div {
             background-color: #E3E3E3;
             height: 110px;
@@ -481,6 +525,12 @@
                     <div class="detail-value">{{ $student->updated_at->format('Y-m-d H:i:s') }}</div>
                 </div>
             </div>
+
+            <div class="action-buttons">
+                <button class="edit-btn" onclick="editStudent()">Edit</button>
+                <button class="print-btn" onclick="printDetails()">Print</button>
+            </div>
+
             @else
                 <div class="alert alert-info mt-4">
                     <h5>Search for a Student</h5>
@@ -554,6 +604,58 @@
                 });
             });
         });
+
+    function editStudent() {
+    // Get the student ID from Blade
+    const studentId = "{{ $student->id ?? '' }}";
+
+    if (studentId) {
+        // Redirect to edit page using your route structure
+        window.location.href = `/admin/student-details/${studentId}/edit`;
+    } else {
+        alert('Student ID not found');
+    }
+}
+
+function printDetails() {
+    // Hide the action buttons before printing
+    const actionButtons = document.querySelector('.action-buttons');
+    if (actionButtons) {
+        actionButtons.style.display = 'none';
+    }
+
+    // Print the page
+    window.print();
+
+    // Show the buttons again after printing
+    setTimeout(() => {
+        if (actionButtons) {
+            actionButtons.style.display = 'flex';
+        }
+    }, 1000);
+}
+
+// Add print styles to hide buttons when printing
+const printStyles = `
+    @media print {
+        .action-buttons {
+            display: none !important;
+        }
+        body {
+            font-size: 12pt;
+            line-height: 1.4;
+        }
+    }
+`;
+
+const styleSheet = document.createElement("style");
+styleSheet.type = "text/css";
+styleSheet.innerText = printStyles;
+document.head.appendChild(styleSheet);
+
+
+
+
     </script>
 </body>
 </html>
