@@ -26,6 +26,7 @@ Route::middleware(['web'])->group(function () {
         ->name('student.details.create');
     Route::post('/admin/student-details/store', [StudentDetailController::class, 'store'])
         ->name('student.details.store');
+
     Route::get('/admin/student-details/verified', [StudentDetailController::class, 'verified'])
         ->name('student.details.verified');
     Route::post('/admin/student-details/clear-session', [StudentDetailController::class, 'clearSession'])
@@ -52,6 +53,7 @@ Route::middleware(['web'])->group(function () {
         ->name('student.details.export.pdf');
     Route::get('/admin/api/hostel-options', [StudentDetailController::class, 'getHostelOptions'])
         ->name('api.hostel.options');
+
 });
 
 // Contact Us Route
