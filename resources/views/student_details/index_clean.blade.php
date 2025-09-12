@@ -358,7 +358,7 @@
                         <a href="{{ route('student.details.create') }}" class="action-btn btn-primary">
                             <i class="fas fa-plus"></i> Add Student
                         </a>
-                        <a href="{{ route('student.details.pdf.page') }}" class="action-btn btn-success" target="_blank">
+                        <a href="{{ route('student.details.pdf.export.page') }}" class="action-btn btn-success" target="_blank">
                             <i class="fas fa-file-pdf"></i> Export PDF
                         </a>
                         <button class="action-btn btn-info" onclick="loadStudents()">

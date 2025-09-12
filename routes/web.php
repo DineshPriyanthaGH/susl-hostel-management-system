@@ -34,22 +34,27 @@ Route::middleware(['web'])->group(function () {
     // Student Search and Management Routes
     Route::get('/admin/student-details', [StudentDetailController::class, 'index'])
         ->name('student.details.index');
+    Route::get('/admin/student-details/data', [StudentDetailController::class, 'getData'])
+        ->name('student.details.data');
     Route::get('/admin/student-details/search', [StudentDetailController::class, 'search'])
         ->name('student.details.search');
+    Route::get('/admin/student-details/export-pdf', [StudentDetailController::class, 'exportPDF'])
+        ->name('student.details.export.pdf');
+    Route::get('/admin/student-details/pdf-export-page', function() {
+        return view('pdf_export');
+    })->name('student.details.pdf.page');
     Route::post('/admin/student-details/find', [StudentDetailController::class, 'findStudent'])
         ->name('student.details.find');
-    Route::get('/admin/student-details/{id}', [StudentDetailController::class, 'show'])
-        ->name('student.details.show');
     Route::get('/admin/student-details/{id}/edit', [StudentDetailController::class, 'edit'])
         ->name('student.details.edit');
+    Route::get('/admin/student-details/{id}', [StudentDetailController::class, 'show'])
+        ->name('student.details.show');
     Route::put('/admin/student-details/{id}', [StudentDetailController::class, 'update'])
         ->name('student.details.update');
     Route::delete('/admin/student-details/{id}', [StudentDetailController::class, 'destroy'])
         ->name('student.details.destroy');
     
     // PDF Export Routes
-    Route::get('/admin/student-details/export-pdf', [StudentDetailController::class, 'exportPDF'])
-        ->name('student.details.export.pdf');
     Route::get('/admin/api/hostel-options', [StudentDetailController::class, 'getHostelOptions'])
         ->name('api.hostel.options');
 });
@@ -68,3 +73,20 @@ Route::get('/home', function() {
 Route::get('/test-pdf', function() {
     return view('test_pdf');
 })->name('test.pdf');
+
+// Debug PDF route (temporary)
+Route::get('/debug-pdf', function() {
+    return view('debug_pdf');
+})->name('debug.pdf');
+
+// Test route for debugging
+Route::get('/test-routes', function() {
+    return response()->json([
+        'message' => 'Routes are working!',
+        'timestamp' => now(),
+        'routes' => [
+            'student.details.index' => route('student.details.index'),
+            'student.details.pdf.page' => route('student.details.pdf.page'),
+        ]
+    ]);
+})->name('test.routes');

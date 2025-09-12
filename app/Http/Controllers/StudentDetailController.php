@@ -162,6 +162,51 @@ class StudentDetailController extends Controller
         return view('student_details.index', compact('students'));
     }
 
+    public function getData()
+    {
+        // Check if admin is logged in
+        if (!Session::get('admin_logged_in')) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+
+        try {
+            $students = StudentDetail::orderBy('created_at', 'desc')->get();
+            
+            // Format the data for the frontend
+            $formattedStudents = $students->map(function ($student) {
+                // Parse the full name
+                $nameParts = explode(' ', $student->full_name, 2);
+                $firstName = $nameParts[0] ?? '';
+                $lastName = $nameParts[1] ?? '';
+                
+                // Determine current hostel (most recent year with hostel assignment)
+                $currentHostel = null;
+                if ($student->fourth_year_hostel) $currentHostel = $student->fourth_year_hostel;
+                elseif ($student->third_year_hostel) $currentHostel = $student->third_year_hostel;
+                elseif ($student->second_year_hostel) $currentHostel = $student->second_year_hostel;
+                elseif ($student->first_year_hostel) $currentHostel = $student->first_year_hostel;
+                
+                return [
+                    'id' => $student->id,
+                    'student_id' => $student->student_id,
+                    'first_name' => $firstName,
+                    'last_name' => $lastName,
+                    'email' => $student->student_id . '@students.susl.ac.lk', // Generate email from student ID
+                    'phone' => $student->telephone_number,
+                    'faculty' => $student->faculty,
+                    'year' => 'N/A', // You may want to calculate this based on current date and admission year
+                    'current_hostel' => $currentHostel
+                ];
+            });
+
+            return response()->json($formattedStudents);
+            
+        } catch (\Exception $e) {
+            \Log::error('Error getting student data: ' . $e->getMessage());
+            return response()->json(['error' => 'Failed to load student data'], 500);
+        }
+    }
+
     public function show($id)
     {
         // Check if admin is logged in
@@ -259,13 +304,33 @@ class StudentDetailController extends Controller
     public function exportPDF(Request $request)
     {
         try {
-            // Check if admin is logged in
-            if (!Session::get('admin_logged_in')) {
+            // Check if admin is logged in - more lenient check
+            $adminLoggedIn = Session::get('admin_logged_in');
+            $adminUserId = Session::get('admin_user_id');
+            
+            if (!$adminLoggedIn && !$adminUserId) {
+                // Return JSON for AJAX requests, redirect for direct access
+                if ($request->ajax() || $request->wantsJson()) {
+                    return response()->json([
+                        'error' => 'Authentication required',
+                        'redirect' => route('admin.login')
+                    ], 401);
+                }
                 return redirect()->route('admin.login')->with('error', 'Please login first.');
             }
 
             $hostel = $request->get('hostel');
             $year = $request->get('year', 'all');
+            
+            // Debug logging
+            \Log::info('PDF Export Request', [
+                'hostel' => $hostel,
+                'year' => $year,
+                'admin_logged_in' => $adminLoggedIn,
+                'admin_user_id' => $adminUserId,
+                'request_method' => $request->method(),
+                'user_agent' => $request->userAgent()
+            ]);
             
             // Build query based on filters
             $query = StudentDetail::query();
@@ -288,48 +353,64 @@ class StudentDetailController extends Controller
             
             $students = $query->orderBy('full_name')->get();
             
-            // For debugging - if no DomPDF, create simple response
-            if (!class_exists('Barryvdh\DomPDF\Facade\Pdf')) {
+            // For debugging - create simple HTML if DomPDF fails
+            try {
+                // Prepare data for PDF
+                $data = [
+                    'students' => $students,
+                    'hostel' => $hostel,
+                    'year' => $year,
+                    'total_students' => $students->count(),
+                    'generated_at' => now()->format('Y-m-d H:i:s'),
+                    'generated_by' => $adminUserId ?: 'Admin'
+                ];
+                
+                // Generate PDF
+                $pdf = PDF::loadView('reports.students_hostel_pdf', $data);
+                $pdf->setPaper('A4', 'portrait');
+                
+                // Generate filename
+                $filename = 'SUSL_Students_';
+                if ($hostel && $hostel !== 'all') {
+                    $filename .= str_replace(' ', '_', $hostel) . '_';
+                }
+                if ($year && $year !== 'all') {
+                    $filename .= ucfirst($year) . '_Year_';
+                }
+                $filename .= date('Y-m-d_H-i-s') . '.pdf';
+                
+                return $pdf->download($filename);
+                
+            } catch (\Exception $pdfError) {
+                \Log::error('PDF Generation Error', [
+                    'error' => $pdfError->getMessage(),
+                    'file' => $pdfError->getFile(),
+                    'line' => $pdfError->getLine()
+                ]);
+                
+                // Return JSON response with debug info
                 return response()->json([
-                    'message' => 'PDF generation ready',
+                    'error' => 'PDF generation failed',
+                    'message' => $pdfError->getMessage(),
                     'students_count' => $students->count(),
                     'hostel' => $hostel,
                     'year' => $year,
-                    'note' => 'DomPDF not loaded - this is a test response'
-                ]);
+                    'debug' => 'Check logs for detailed error information'
+                ], 500);
             }
-            
-            // Prepare data for PDF
-            $data = [
-                'students' => $students,
-                'hostel' => $hostel,
-                'year' => $year,
-                'total_students' => $students->count(),
-                'generated_at' => now()->format('Y-m-d H:i:s'),
-                'generated_by' => Session::get('admin_user_id', 'Admin')
-            ];
-            
-            // Generate PDF
-            $pdf = PDF::loadView('reports.students_hostel_pdf', $data);
-            $pdf->setPaper('A4', 'portrait');
-            
-            // Generate filename
-            $filename = 'SUSL_Students_';
-            if ($hostel && $hostel !== 'all') {
-                $filename .= str_replace(' ', '_', $hostel) . '_';
-            }
-            if ($year && $year !== 'all') {
-                $filename .= ucfirst($year) . '_Year_';
-            }
-            $filename .= date('Y-m-d_H-i-s') . '.pdf';
-            
-            return $pdf->download($filename);
             
         } catch (\Exception $e) {
-            return response()->json([
+            \Log::error('Export PDF Error', [
                 'error' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine()
+            ]);
+            
+            return response()->json([
+                'error' => 'Export failed',
+                'message' => $e->getMessage(),
                 'line' => $e->getLine(),
-                'file' => $e->getFile()
+                'file' => basename($e->getFile())
             ], 500);
         }
     }
