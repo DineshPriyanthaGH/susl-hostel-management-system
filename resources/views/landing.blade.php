@@ -420,19 +420,19 @@
     <section id="home" class="hero-section">
         <div class="slider-container">
        
-            <div class="slide active" style="background-image: url('')"></div>
+            <div class="slide active" style="background-image: url('{{ asset('images/hero1.jpeg') }}')"></div>
             
             
-            <div class="slide" style="background-image: url('')"></div>
+            <div class="slide" style="background-image: url('{{ asset('images/hero2.jpeg') }}')"></div>
             
          
-            <div class="slide" style="background-image: url('')"></div>
+            <div class="slide" style="background-image: url('{{ asset('images/hero3.jpeg') }}')"></div>
             
       
-            <div class="slide" style="background-image: url('')"></div>
+            <div class="slide" style="background-image: url('{{ asset('images/hero1.jpeg') }}')"></div>
             
   
-            <div class="slide" style="background-image: url('')"></div>
+            <div class="slide" style="background-image: url('{{ asset('images/hero2.jpeg') }}')"></div>
         </div>
         
         <div class="hero-content">
