@@ -10,6 +10,16 @@ Route::get('/', function() {
     return view('landing');
 })->name('landing');
 
+// Health Check Route
+Route::get('/health', function() {
+    return response()->json([
+        'status' => 'healthy',
+        'timestamp' => now(),
+        'app' => 'SUSL Hostel Management System',
+        'version' => '1.0.0'
+    ]);
+})->name('health.check');
+
 // Admin Authentication Routes
 Route::get('/admin/login', function() {
     return view('auth.admin_login');
