@@ -1,0 +1,55 @@
+# SUSL Hostel Management System - Nixpacks Configuration
+# This file configures the build process for cloud deployment platforms
+
+[phases.setup]
+nixPkgs = [
+    "php82",
+    "php82Extensions.mbstring",
+    "php82Extensions.pdo_mysql",
+    "php82Extensions.xml",
+    "php82Extensions.zip",
+    "php82Extensions.gd",
+    "php82Extensions.curl",
+    "php82Extensions.fileinfo",
+    "php82Extensions.openssl",
+    "php82Extensions.tokenizer",
+    "php82Extensions.bcmath",
+    "php82Extensions.ctype",
+    "php82Extensions.json",
+    "php82Extensions.dom",
+    "php82Extensions.intl",
+    "php82Extensions.session",
+    "nodejs_20",
+    "npm"
+]
+
+[phases.install]
+cmds = [
+    "composer install --no-dev --optimize-autoloader --no-interaction",
+    "npm ci --only=production"
+]
+
+[phases.build]
+cmds = [
+    "npm run production",
+    "php artisan config:cache",
+    "php artisan route:cache",
+    "php artisan view:cache"
+]
+
+[start]
+cmd = "php artisan serve --host=0.0.0.0 --port=$PORT"
+
+[variables]
+# PHP Configuration
+PHP_VERSION = "8.2"
+COMPOSER_ALLOW_SUPERUSER = "1"
+COMPOSER_NO_INTERACTION = "1"
+
+# Laravel Configuration
+LARAVEL_SKIP_MIGRATIONS = "false"
+LARAVEL_SKIP_CACHE = "false"
+
+# Node.js Configuration
+NODE_ENV = "production"
+NPM_CONFIG_PRODUCTION = "true"

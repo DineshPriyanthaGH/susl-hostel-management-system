@@ -1,0 +1,60 @@
+# Sevalla Cloud Deployment Configuration
+# Alternative to nixpacks.toml for Sevalla platform
+
+version: "1"
+
+build:
+  # Use PHP 8.2 (latest stable)
+  runtime: "php"
+  version: "8.2"
+  
+  # Install system dependencies
+  packages:
+    - "php8.2-mysql"
+    - "php8.2-mbstring"
+    - "php8.2-xml"
+    - "php8.2-zip"
+    - "php8.2-gd"
+    - "php8.2-curl"
+    - "php8.2-bcmath"
+    - "php8.2-intl"
+    - "php8.2-dom"
+    - "nodejs"
+    - "npm"
+  
+  # Build commands
+  commands:
+    - "composer install --no-dev --optimize-autoloader --no-interaction"
+    - "npm ci --only=production"
+    - "npm run production"
+    - "php artisan config:cache"
+    - "php artisan route:cache"
+    - "php artisan view:cache"
+
+# Web server configuration
+web:
+  # Start command
+  start: "php artisan serve --host=0.0.0.0 --port=$PORT"
+  
+  # Health check
+  healthcheck:
+    path: "/"
+    timeout: 30
+    interval: 60
+
+# Database service
+services:
+  - type: "mysql"
+    version: "8.0"
+    name: "susl-hostel-db"
+
+# Environment variables that should be set in Sevalla dashboard
+env:
+  APP_NAME: "SUSL Hostel Management System"
+  APP_ENV: "production"
+  APP_DEBUG: "false"
+  LOG_LEVEL: "error"
+  SESSION_DRIVER: "file"
+  CACHE_DRIVER: "file"
+  QUEUE_CONNECTION: "sync"
+  FILESYSTEM_DRIVER: "local"
