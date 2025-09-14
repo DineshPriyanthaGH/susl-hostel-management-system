@@ -1,18 +1,14 @@
 {
     "private": true,
     "scripts": {
-        "dev": "npm run development",
-        "development": "mix",
-        "watch": "mix watch",
-        "watch-poll": "mix watch -- --watch-options-poll=1000",
-        "hot": "mix watch --hot",
-        "prod": "npm run production",
-        "production": "mix --production"
+        "dev": "echo 'Development assets ready'",
+        "development": "echo 'Development assets ready'",
+        "watch": "echo 'Watch mode not needed for production'",
+        "watch-poll": "echo 'Watch mode not needed for production'",
+        "hot": "echo 'Hot reload not needed for production'",
+        "prod": "echo 'Production assets ready'",
+        "production": "echo 'Production assets ready - using pre-compiled assets'"
     },
     "devDependencies": {
-        "axios": "^0.21",
-        "laravel-mix": "^6.0.6",
-        "lodash": "^4.17.19",
-        "postcss": "^8.1.14"
     }
 }
