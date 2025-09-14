@@ -1,30 +1,11 @@
-# SUSL Hostel Management System - Simplified Nixpacks Configuration
-# This version avoids npm issues by focusing on PHP essentials
+# SUSL Hostel Management System - Ultra-Minimal Nixpacks Configuration
+# Only base PHP 8.2 to avoid extension conflicts
 
 [phases.setup]
-nixPkgs = [
-    "php82",
-    "php82Extensions.mbstring",
-    "php82Extensions.pdo_mysql",
-    "php82Extensions.xml",
-    "php82Extensions.zip",
-    "php82Extensions.gd",
-    "php82Extensions.curl",
-    "php82Extensions.fileinfo",
-    "php82Extensions.openssl",
-    "php82Extensions.tokenizer",
-    "php82Extensions.bcmath",
-    "php82Extensions.ctype",
-    "php82Extensions.json",
-    "php82Extensions.dom",
-    "php82Extensions.intl",
-    "php82Extensions.session"
-]
+nixPkgs = ["php82"]
 
 [phases.install]
-cmds = [
-    "composer install --no-dev --optimize-autoloader --no-interaction"
-]
+cmds = ["composer install --no-dev --optimize-autoloader --no-interaction"]
 
 [phases.build]
 cmds = [
@@ -37,11 +18,5 @@ cmds = [
 cmd = "php artisan serve --host=0.0.0.0 --port=$PORT"
 
 [variables]
-# PHP Configuration
 PHP_VERSION = "8.2"
 COMPOSER_ALLOW_SUPERUSER = "1"
-COMPOSER_NO_INTERACTION = "1"
-
-# Laravel Configuration
-LARAVEL_SKIP_MIGRATIONS = "false"
-LARAVEL_SKIP_CACHE = "false"
