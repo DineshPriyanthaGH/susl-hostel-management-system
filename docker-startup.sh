@@ -10,25 +10,56 @@ php artisan cache:clear
 php artisan route:clear
 php artisan view:clear
 
-# Update .env with production values
+# Update .env with production values from environment variables
 echo "📝 Setting up production environment..."
+
+# Extract database details from DB_URL if available
+if [ ! -z "$DB_URL" ]; then
+    # Extract host from DB_URL: mysql://user:pass@host:port/db
+    DB_HOST_EXTRACTED=$(echo "$DB_URL" | sed -n 's|.*@\([^:]*\):.*|\1|p')
+    DB_PORT_EXTRACTED=$(echo "$DB_URL" | sed -n 's|.*:\([0-9]*\)/.*|\1|p')
+    DB_USER_EXTRACTED=$(echo "$DB_URL" | sed -n 's|mysql://\([^:]*\):.*|\1|p')
+    DB_PASS_EXTRACTED=$(echo "$DB_URL" | sed -n 's|mysql://[^:]*:\([^@]*\)@.*|\1|p')
+    DB_NAME_EXTRACTED=$(echo "$DB_URL" | sed -n 's|.*/\([^?]*\).*|\1|p')
+    
+    echo "Using database connection details from DB_URL"
+    echo "Host: $DB_HOST_EXTRACTED"
+    echo "Database: $DB_NAME_EXTRACTED"
+    echo "User: $DB_USER_EXTRACTED"
+else
+    # Use individual environment variables
+    DB_HOST_EXTRACTED="$DB_HOST"
+    DB_PORT_EXTRACTED="${DB_PORT:-3306}"
+    DB_USER_EXTRACTED="$DB_USERNAME"
+    DB_PASS_EXTRACTED="$DB_PASSWORD"
+    DB_NAME_EXTRACTED="$DB_DATABASE"
+fi
+
 # Copy .env.example if .env doesn't exist
 if [ ! -f .env ]; then
     cp .env.example .env
 fi
 
-# Update database configuration
-sed -i "s/DB_DATABASE=.*/DB_DATABASE=\${DB_DATABASE:-susl_hostel_management_syst}/" .env
-sed -i "s/DB_HOST=.*/DB_HOST=\${DB_HOST:-\${DATABASE_HOST}}/" .env
-sed -i "s/DB_USERNAME=.*/DB_USERNAME=\${DB_USERNAME:-susl_root}/" .env
-sed -i "s/DB_PASSWORD=.*/DB_PASSWORD=\${DB_PASSWORD}/" .env
-sed -i "s/APP_ENV=.*/APP_ENV=production/" .env
-sed -i "s/APP_DEBUG=.*/APP_DEBUG=false/" .env
+# Update .env file with actual values (not variables)
+sed -i "s|DB_HOST=.*|DB_HOST=$DB_HOST_EXTRACTED|" .env
+sed -i "s|DB_PORT=.*|DB_PORT=$DB_PORT_EXTRACTED|" .env
+sed -i "s|DB_DATABASE=.*|DB_DATABASE=$DB_NAME_EXTRACTED|" .env
+sed -i "s|DB_USERNAME=.*|DB_USERNAME=$DB_USER_EXTRACTED|" .env
+sed -i "s|DB_PASSWORD=.*|DB_PASSWORD=$DB_PASS_EXTRACTED|" .env
+sed -i "s|APP_ENV=.*|APP_ENV=production|" .env
+sed -i "s|APP_DEBUG=.*|APP_DEBUG=false|" .env
 
 # Set APP_KEY if provided
-if [ ! -z "\${APP_KEY}" ]; then
-    sed -i "s/APP_KEY=.*/APP_KEY=\${APP_KEY}/" .env
+if [ ! -z "$APP_KEY" ]; then
+    sed -i "s|APP_KEY=.*|APP_KEY=$APP_KEY|" .env
 fi
+
+# Set APP_URL if provided
+if [ ! -z "$APP_URL" ]; then
+    sed -i "s|APP_URL=.*|APP_URL=$APP_URL|" .env
+fi
+
+echo "✅ Environment configured successfully"
 
 # Clear cache again after updating .env
 php artisan config:clear
